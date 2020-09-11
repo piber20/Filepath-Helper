@@ -1,8 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <metadata>
-	<name>!!!!! Filepath Helper</name>
-	<directory>!!!!! filepath helper</directory>
-	<description/>
-	<version>1.0</version>
-	<visibility/>
-</metadata>
+    <name>!!!!! Filepath Helper</name>
+    <directory>!!!!! filepath helper</directory>
+    <id>2225951387</id>
+    <description>This is a technical script for modders.
 
+This script creates functions to assist with manipulating and digging through directories and files, exposing some extremely hacky methods as easy to use ready made functions.</description>
+    <version>1.1</version>
+    <visibility>Public</visibility>
+    <tag id="Lua"/>
+</metadata>
