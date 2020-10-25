@@ -1,7 +1,7 @@
 ---------------------
 -- FILEPATH HELPER --
 ---------------------
--- Version 1
+-- Version 2
 -- Created by piber
 
 -- This script creates functions to assist with manipulating and digging through directories and files, exposing some extremely hacky methods as easy to use ready made functions.
@@ -82,7 +82,7 @@
 -------------
 -- version --
 -------------
-local fileVersion = 1
+local fileVersion = 2
 
 --prevent older/same version versions of this script from loading
 if FilepathHelper and FilepathHelper.Version >= fileVersion then
@@ -207,6 +207,10 @@ function FilepathHelper.DoFile(filename)
 	if not fileLoaded and not hasLuaExtension then
 	
 		fileLoaded, returned = pcall(FilepathHelper.DoFile, filename .. ".lua")
+		
+		if not fileLoaded then
+			errors[#errors+1] = returned
+		end
 	
 	end
 	
