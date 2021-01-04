@@ -1,7 +1,7 @@
 ---------------------
 -- FILEPATH HELPER --
 ---------------------
--- Version 2
+-- Version 3
 -- Created by piber
 
 -- This script creates functions to assist with manipulating and digging through directories and files, exposing some extremely hacky methods as easy to use ready made functions.
@@ -29,6 +29,7 @@
 -- Use this to load lua scripts instead of require.
 -- Allows scripts to be run multiple times in the same session.
 -- Runs based on the game's root path, then tests for game/resources/scripts, then tests in mods starting from the last one loaded.
+-- Falls back to using require if dofile was unable to load the script, in case the user has a weird filesystem that only require works with.
 -- Overrides dofile, call FilepathHelper.OldDoFile for the unmodified dofile function.
 
 -- FilepathHelper.IsFile
@@ -82,7 +83,7 @@
 -------------
 -- version --
 -------------
-local fileVersion = 2
+local fileVersion = 3
 
 --prevent older/same version versions of this script from loading
 if FilepathHelper and FilepathHelper.Version >= fileVersion then
@@ -202,14 +203,41 @@ function FilepathHelper.DoFile(filename)
 		
 	end
 	
-	--re-call this function if no lua extension was found and we still havent found the file that loaded
-	local hasLuaExtension = string.find(filename, ".lua", string.len(filename) - 4)
-	if not fileLoaded and not hasLuaExtension then
+	local hasLuaExtension = string.find(filename, ".lua", -4)
+	if not hasLuaExtension then
 	
-		fileLoaded, returned = pcall(FilepathHelper.DoFile, filename .. ".lua")
-		
+		--re-call this function if no lua extension was found and we still havent found the file that loaded
 		if not fileLoaded then
-			errors[#errors+1] = returned
+		
+			fileLoaded, returned = pcall(FilepathHelper.DoFile, filename .. ".lua")
+			
+			if not fileLoaded and not string.find(returned, "cannot open") then
+			
+				errors[#errors+1] = returned
+				
+			end
+		
+		end
+		
+		--try using require instead
+		if not fileLoaded then
+		
+			fileLoaded, returned = pcall(require, filename)
+			
+			local warnMsg = "dofile failed to load " .. filename .. ", falling back to require"
+			
+			if fileLoaded then
+				
+				print(warnMsg)
+				Isaac.DebugString(warnMsg)
+				
+			elseif not string.find(returned, "no file") then
+			
+				errors[#errors+1] = warnMsg
+				errors[#errors+1] = returned
+			
+			end
+		
 		end
 	
 	end
@@ -231,10 +259,13 @@ function FilepathHelper.DoFile(filename)
 			--try to find an error that wasnt a standard "cannot open" error, this moves the focus to syntax errors
 			for _,errorString in ipairs(errors) do
 			
-				if not string.find(errorString, "cannot open") then
+				if not string.find(errorString, "cannot open")
+				and not string.find(errorString, "no file")
+				and not string.find(errorString, "falling back to require") then
 				
 					fullErrorMessage = errorString
 					cannotOpen = false
+					
 					break
 					
 				end
@@ -249,9 +280,9 @@ function FilepathHelper.DoFile(filename)
 			
 			for _,errorString in ipairs(errors) do
 			
-					fullErrorMessage = fullErrorMessage .. "\
+				fullErrorMessage = fullErrorMessage .. "\
 	" .. tostring(errorString)
-				
+			
 			end
 			
 		end
