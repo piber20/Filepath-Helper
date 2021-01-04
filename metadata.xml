@@ -6,7 +6,7 @@
     <description>This is a technical script for modders.
 
 This script creates functions to assist with manipulating and digging through directories and files, exposing some extremely hacky methods as easy to use ready made functions.</description>
-    <version>1.2</version>
+    <version>1.3</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
 </metadata>
