@@ -1,1 +1,2 @@
+require("lowercasepaths")
 require("filepathhelper")
