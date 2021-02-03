@@ -1,7 +1,7 @@
 ---------------------
 -- FILEPATH HELPER --
 ---------------------
--- Version 4
+-- Version 5
 -- Created by piber
 
 -- This script creates functions to assist with manipulating and digging through directories and files, exposing some extremely hacky methods as easy to use ready made functions.
@@ -83,7 +83,7 @@
 -------------
 -- version --
 -------------
-local fileVersion = 4
+local fileVersion = 5
 
 --prevent older/same version versions of this script from loading
 if FilepathHelper and FilepathHelper.Version >= fileVersion then
@@ -149,6 +149,8 @@ FilepathHelper.OldDoFile = FilepathHelper.OldDoFile or dofile
 function FilepathHelper.DoFile(filename)
 
 	FilepathHelper.GetCurrentModPath()
+	
+	filename = string.lower(filename)
 
 	--intentionally let it error if they try to run this without a string
 	if type(filename) ~= "string" then
